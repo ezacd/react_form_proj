@@ -1,6 +1,8 @@
 body {
   display: flex;
   justify-content: center;
+  align-items: flex-start;
+  background-color: #121212;
 }
 
 .main_page_buttons_box {
