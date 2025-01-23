@@ -1,0 +1,7 @@
+.uncontrolled_form_page {
+  display: flex;
+  justify-content: start;
+
+  width: 100vw;
+  height: 100vh;
+}
