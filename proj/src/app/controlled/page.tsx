@@ -2,6 +2,9 @@
 
 import { useForm } from 'react-hook-form';
 import './controlled_page.css';
+import { useDispatch } from 'react-redux';
+import { submitForm } from '../_redux/formSlice';
+import { useState } from 'react';
 
 type FormData = {
   name: string;
@@ -11,14 +14,44 @@ type FormData = {
   confiumPassword: string;
   gender: string;
   tc: boolean;
-  file: FileList;
+  fileBase64: string | null;
   country: string;
 };
 
 export default function Controlled() {
-  const { register, handleSubmit } = useForm<FormData>();
+  const { register, handleSubmit, setValue } = useForm<FormData>();
+  const dispatch = useDispatch();
+  const [fileError, setFileError] = useState<string | null>(null);
 
-  const onSubmit = (data: FormData) => console.log(data);
+  const onSubmit = (data: FormData) => {
+    dispatch(submitForm(data));
+  };
+
+  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    event.preventDefault();
+    const file = event.target.files?.[0];
+
+    if (file) {
+      const allowedTypes = ['image/png', 'image/jpeg'];
+      if (!allowedTypes.includes(file.type)) {
+        setFileError('Only .png and .jpeg files are allowed.');
+        setValue('fileBase64', null); // set null if file is invalid
+        return;
+      }
+
+      // convert file to Base64
+      const reader = new FileReader();
+      reader.onload = () => {
+        const base64 = reader.result as string;
+        setValue('fileBase64', base64);
+        setFileError(null);
+      };
+      reader.onerror = () => {
+        setFileError('Error reading file.');
+      };
+      reader.readAsDataURL(file);
+    }
+  };
 
   return (
     <div className="form_page">
@@ -67,7 +100,8 @@ export default function Controlled() {
           </label>
           <label>
             Select image
-            <input type="file" {...register('file', { required: true })} />
+            <input type="file" onChange={handleFileChange} />
+            {fileError && <p className="error">{fileError}</p>}
           </label>
           <label>
             Country
