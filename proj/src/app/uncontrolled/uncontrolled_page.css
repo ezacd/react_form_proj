@@ -106,3 +106,9 @@ select option {
   background-color: #292929;
   color: #ffffff;
 }
+
+.TC {
+  display: flex;
+  flex-direction: row;
+  gap: 5px;
+}

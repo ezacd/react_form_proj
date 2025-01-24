@@ -29,7 +29,7 @@ export default function Controlled() {
               <option value="woman">Woman</option>
             </select>
           </label>
-          <label>
+          <label className="TC">
             T&C
             <input type="checkbox" />
           </label>
