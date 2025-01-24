@@ -4,7 +4,7 @@ export default function Controlled() {
   return (
     <div className="form_page">
       <div className="form">
-        <div>Uncontrolled form</div>
+        <div>Controlled form</div>
         <form>
           <label>
             Name
