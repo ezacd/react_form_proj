@@ -15,6 +15,10 @@ export default function Controlled() {
             <input type="text" />
           </label>
           <label>
+            Email
+            <input type="email" />
+          </label>
+          <label>
             Password
             <input type="password" />
           </label>
