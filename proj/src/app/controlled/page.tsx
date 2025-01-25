@@ -5,21 +5,33 @@ import './controlled_page.css';
 import { useDispatch } from 'react-redux';
 import { submitForm } from '../_redux/formSlice';
 import { useState } from 'react';
+import { yupResolver } from '@hookform/resolvers/yup';
+import { validationSchema } from './validationSchema';
 
 type FormData = {
   name: string;
-  age: string;
+  age: number;
   email: string;
   password: string;
   confiumPassword: string;
-  gender: string;
+  gender: 'Man' | 'Woman';
   tc: boolean;
-  fileBase64: string | null;
+  fileBase64: string;
   country: string;
 };
 
+// TODO  доделать отображение ошибок yup !!!
+
 export default function Controlled() {
-  const { register, handleSubmit, setValue } = useForm<FormData>();
+  const {
+    register,
+    handleSubmit,
+    setValue,
+    formState: { errors },
+  } = useForm<FormData>({
+    resolver: yupResolver(validationSchema),
+    mode: 'onChange',
+  });
   const dispatch = useDispatch();
   const [fileError, setFileError] = useState<string | null>(null);
 
@@ -35,7 +47,6 @@ export default function Controlled() {
       const allowedTypes = ['image/png', 'image/jpeg'];
       if (!allowedTypes.includes(file.type)) {
         setFileError('Only .png and .jpeg files are allowed.');
-        setValue('fileBase64', null); // set null if file is invalid
         return;
       }
 
@@ -61,6 +72,7 @@ export default function Controlled() {
           <label>
             Name
             <input type="text" {...register('name', { required: true })} />
+            <p className="error">{errors.name?.message}</p>
           </label>
           <label>
             Age
@@ -68,10 +80,12 @@ export default function Controlled() {
               type="number"
               {...register('age', { required: true, min: 0 })}
             />
+            <p className="error">{errors.age?.message}</p>
           </label>
           <label>
             Email
             <input type="email" {...register('email', { required: true })} />
+            <p className="error">{errors.email?.message}</p>
           </label>
           <label>
             Password
@@ -79,6 +93,7 @@ export default function Controlled() {
               type="password"
               {...register('password', { required: true })}
             />
+            <p className="error">{errors.password?.message}</p>
           </label>
           <label>
             Confirm password
@@ -86,17 +101,21 @@ export default function Controlled() {
               type="password"
               {...register('confiumPassword', { required: true })}
             />
+            <p className="error">{errors.confiumPassword?.message}</p>
           </label>
           <label>
             Gender
             <select {...register('gender', { required: true })}>
-              <option value="man">Man</option>
-              <option value="woman">Woman</option>
+              <option value="">Select gender</option>
+              <option value="Man">Man</option>
+              <option value="Woman">Woman</option>
             </select>
+            <p className="error">{errors.gender?.message}</p>
           </label>
           <label className="TC">
             T&C
             <input type="checkbox" {...register('tc', { required: true })} />
+            <p className="error">{errors.tc?.message}</p>
           </label>
           <label>
             Select image
@@ -106,6 +125,7 @@ export default function Controlled() {
           <label>
             Country
             <input type="text" {...register('country', { required: true })} />
+            <p className="error">{errors.country?.message}</p>
           </label>
           <button type="submit">Submit</button>
         </form>

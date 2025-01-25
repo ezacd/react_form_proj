@@ -2,11 +2,11 @@ import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
 interface FormData {
   name: string;
-  age: string;
+  age: number;
   email: string;
   password: string;
   confiumPassword: string;
-  gender: string;
+  gender: 'Man' | 'Woman';
   tc: boolean;
   fileBase64: string | null;
   country: string;
