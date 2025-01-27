@@ -1,10 +1,10 @@
 'use client';
 
+import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import './controlled_page.css';
 import { useDispatch } from 'react-redux';
 import { submitForm } from '../_redux/formSlice';
-import { useState } from 'react';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { validationSchema } from './validationSchema';
 
@@ -19,8 +19,6 @@ type FormData = {
   fileBase64: string;
   country: string;
 };
-
-// TODO  доделать отображение ошибок yup !!!
 
 export default function Controlled() {
   const {
