@@ -1,12 +1,14 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import './controlled_page.css';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { submitForm } from '../_redux/formSlice';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { validationSchema } from './validationSchema';
+import { useRouter } from 'next/navigation';
+import { RootState } from '../_redux/store';
 
 type FormData = {
   name: string;
@@ -25,16 +27,29 @@ export default function Controlled() {
     register,
     handleSubmit,
     setValue,
+    reset,
     formState: { errors },
   } = useForm<FormData>({
     resolver: yupResolver(validationSchema),
     mode: 'onChange',
   });
+
   const dispatch = useDispatch();
+  const router = useRouter();
+  const controlledData = useSelector(
+    (state: RootState) => state.form.submittedData[0],
+  );
   const [fileError, setFileError] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (controlledData) {
+      reset(controlledData);
+    }
+  }, [controlledData, reset]);
 
   const onSubmit = (data: FormData) => {
     dispatch(submitForm(data));
+    router.push('/');
   };
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -48,7 +63,6 @@ export default function Controlled() {
         return;
       }
 
-      // convert file to Base64
       const reader = new FileReader();
       reader.onload = () => {
         const base64 = reader.result as string;

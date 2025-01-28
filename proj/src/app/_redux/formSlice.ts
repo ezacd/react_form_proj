@@ -8,7 +8,7 @@ interface FormData {
   confiumPassword: string;
   gender: 'Man' | 'Woman';
   tc: boolean;
-  fileBase64: string | null;
+  fileBase64: string;
   country: string;
 }
 
@@ -25,7 +25,11 @@ export const formSlice = createSlice({
   initialState,
   reducers: {
     submitForm: (state, action: PayloadAction<FormData>) => {
-      state.submittedData.push(action.payload);
+      if (state.submittedData.length > 0) {
+        state.submittedData[0] = action.payload;
+      } else {
+        state.submittedData.push(action.payload);
+      }
     },
   },
 });
