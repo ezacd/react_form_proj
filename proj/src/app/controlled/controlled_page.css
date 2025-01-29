@@ -90,6 +90,13 @@ button {
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
 }
 
+button:disabled {
+  background-color: #444444;
+  cursor: not-allowed;
+  box-shadow: none;
+  transform: none;
+}
+
 input[type='file'] {
   padding: 5px;
 }

@@ -28,7 +28,7 @@ export default function Controlled() {
     handleSubmit,
     setValue,
     reset,
-    formState: { errors },
+    formState: { errors, isValid },
   } = useForm<FormData>({
     resolver: yupResolver(validationSchema),
     mode: 'onChange',
@@ -139,7 +139,9 @@ export default function Controlled() {
             <input type="text" {...register('country', { required: true })} />
             <p className="error">{errors.country?.message}</p>
           </label>
-          <button type="submit">Submit</button>
+          <button type="submit" disabled={!isValid}>
+            Submit
+          </button>
         </form>
       </div>
     </div>
