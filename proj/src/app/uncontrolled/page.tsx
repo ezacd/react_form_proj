@@ -6,6 +6,7 @@ import { validationSchema } from '../controlled/validationSchema';
 import * as Yup from 'yup';
 import { useDispatch } from 'react-redux';
 import { submitUncontrolledForm } from '../_redux/formSlice';
+import { useRouter } from 'next/navigation';
 
 type FormData = {
   name: string;
@@ -26,9 +27,7 @@ export default function Unontrolled() {
   const [errors, setErrors] = useState<Record<string, string>>({});
 
   const dispatch = useDispatch();
-  // const uncontrolledData = useSelector(
-  //   (state: RootState) => state.form.uncontrolledSubmittedData[0],
-  // );
+  const router = useRouter();
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -52,6 +51,7 @@ export default function Unontrolled() {
       await validationSchema.validate(formattedData, { abortEarly: false });
       setErrors({});
       dispatch(submitUncontrolledForm(formattedData));
+      router.push('/');
     } catch (err) {
       if (err instanceof Yup.ValidationError) {
         const newErrors: Record<string, string> = {};
