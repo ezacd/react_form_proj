@@ -4,6 +4,20 @@ import { useRef, useState } from 'react';
 import './uncontrolled_page.css';
 import { validationSchema } from '../controlled/validationSchema';
 import * as Yup from 'yup';
+import { useDispatch } from 'react-redux';
+import { submitUncontrolledForm } from '../_redux/formSlice';
+
+type FormData = {
+  name: string;
+  age: number;
+  email: string;
+  password: string;
+  confiumPassword: string;
+  gender: 'Man' | 'Woman';
+  tc: boolean;
+  fileBase64: string;
+  country: string;
+};
 
 export default function Unontrolled() {
   const formRef = useRef<HTMLFormElement | null>(null);
@@ -11,21 +25,33 @@ export default function Unontrolled() {
   const [fileError, setFileError] = useState<string | null>(null);
   const [errors, setErrors] = useState<Record<string, string>>({});
 
+  const dispatch = useDispatch();
+  // const uncontrolledData = useSelector(
+  //   (state: RootState) => state.form.uncontrolledSubmittedData[0],
+  // );
+
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
     const formData = new FormData(formRef.current!);
     const dataObject = Object.fromEntries(formData.entries());
 
-    const formattedData = {
-      ...dataObject,
+    const formattedData: FormData = {
+      name: dataObject.name as string,
       age: Number(dataObject.age),
-      tc: formData.get('tc') === 'on',
+      email: dataObject.email as string,
+      password: dataObject.password as string,
+      confiumPassword: dataObject.confiumPassword as string,
+      gender: dataObject.gender as 'Man' | 'Woman',
+      tc: dataObject.tc === 'on',
       fileBase64,
+      country: dataObject.country as string,
     };
+
     try {
       await validationSchema.validate(formattedData, { abortEarly: false });
       setErrors({});
+      dispatch(submitUncontrolledForm(formattedData));
     } catch (err) {
       if (err instanceof Yup.ValidationError) {
         const newErrors: Record<string, string> = {};
@@ -110,7 +136,7 @@ export default function Unontrolled() {
           </label>
           <label>
             Select image
-            <input type="file" name="file" onChange={handleFileChange} />
+            <input type="file" name="fileBase64" onChange={handleFileChange} />
             {fileError && <p className="error">{fileError}</p>}
             {errors.fileBase64 && <p className="error">{errors.fileBase64}</p>}
           </label>

@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import './controlled_page.css';
 import { useDispatch, useSelector } from 'react-redux';
-import { submitForm } from '../_redux/formSlice';
+import { submitControlledForm } from '../_redux/formSlice';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { validationSchema } from './validationSchema';
 import { useRouter } from 'next/navigation';
@@ -37,7 +37,7 @@ export default function Controlled() {
   const dispatch = useDispatch();
   const router = useRouter();
   const controlledData = useSelector(
-    (state: RootState) => state.form.submittedData[0],
+    (state: RootState) => state.form.controlledSubmittedData[0],
   );
   const [fileError, setFileError] = useState<string | null>(null);
 
@@ -48,7 +48,7 @@ export default function Controlled() {
   }, [controlledData, reset]);
 
   const onSubmit = (data: FormData) => {
-    dispatch(submitForm(data));
+    dispatch(submitControlledForm(data));
     router.push('/');
   };
 

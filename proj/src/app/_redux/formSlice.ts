@@ -13,27 +13,37 @@ interface FormData {
 }
 
 interface FormState {
-  submittedData: FormData[];
+  controlledSubmittedData: FormData[];
+  uncontrolledSubmittedData: FormData[];
 }
 
 const initialState: FormState = {
-  submittedData: [],
+  controlledSubmittedData: [],
+  uncontrolledSubmittedData: [],
 };
-
 export const formSlice = createSlice({
   name: 'form',
   initialState,
   reducers: {
-    submitForm: (state, action: PayloadAction<FormData>) => {
-      if (state.submittedData.length > 0) {
-        state.submittedData[0] = action.payload;
+    submitControlledForm: (state, action: PayloadAction<FormData>) => {
+      if (state.controlledSubmittedData.length > 0) {
+        state.controlledSubmittedData[0] = action.payload;
       } else {
-        state.submittedData.push(action.payload);
+        state.controlledSubmittedData.push(action.payload);
+      }
+    },
+    submitUncontrolledForm: (state, action: PayloadAction<FormData>) => {
+      console.log(action.payload);
+      if (state.uncontrolledSubmittedData.length > 0) {
+        state.uncontrolledSubmittedData[0] = action.payload;
+      } else {
+        state.uncontrolledSubmittedData.push(action.payload);
       }
     },
   },
 });
 
-export const { submitForm } = formSlice.actions;
+export const { submitControlledForm, submitUncontrolledForm } =
+  formSlice.actions;
 
 export default formSlice.reducer;

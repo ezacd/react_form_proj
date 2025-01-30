@@ -8,7 +8,11 @@ import Image from 'next/image';
 
 export default function Home() {
   const controlledData = useSelector(
-    (state: RootState) => state.form.submittedData[0],
+    (state: RootState) => state.form.controlledSubmittedData[0],
+  );
+
+  const uncontrolledData = useSelector(
+    (state: RootState) => state.form.uncontrolledSubmittedData[0],
   );
 
   return (
@@ -79,7 +83,7 @@ export default function Home() {
           </div>
           <div className="submitted_data_box">
             <h2>Uncontrolled Form Data</h2>
-            {/* {uncontrolledData ? (
+            {uncontrolledData ? (
               <div className="submitted_data">
                 <p>
                   <strong>Name:</strong> {uncontrolledData.name}
@@ -91,15 +95,38 @@ export default function Home() {
                   <strong>Email:</strong> {uncontrolledData.email}
                 </p>
                 <p>
+                  <strong>Password:</strong> {uncontrolledData.password}
+                </p>
+                <p>
+                  <strong>Confirm Password:</strong>{' '}
+                  {uncontrolledData.confiumPassword}
+                </p>
+                <p>
                   <strong>Gender:</strong> {uncontrolledData.gender}
                 </p>
                 <p>
                   <strong>Country:</strong> {uncontrolledData.country}
                 </p>
+                <p>
+                  <strong>Accepted T&C:</strong>{' '}
+                  {uncontrolledData.tc ? 'Yes' : 'No'}
+                </p>
+                {uncontrolledData.fileBase64 && (
+                  <div className="main_page_img_box">
+                    <strong>Uploaded Image:</strong>
+                    <Image
+                      src={uncontrolledData.fileBase64}
+                      alt="Uploaded"
+                      className="img"
+                      width={200}
+                      height={200}
+                    />
+                  </div>
+                )}
               </div>
             ) : (
               <p>No data submitted yet.</p>
-            )} */}
+            )}
           </div>
         </div>
       </div>
