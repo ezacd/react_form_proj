@@ -2,22 +2,41 @@
 
 import { useRef, useState } from 'react';
 import './uncontrolled_page.css';
+import { validationSchema } from '../controlled/validationSchema';
+import * as Yup from 'yup';
 
 export default function Unontrolled() {
   const formRef = useRef<HTMLFormElement | null>(null);
   const [fileBase64, setFileBase64] = useState<string>('');
   const [fileError, setFileError] = useState<string | null>(null);
+  const [errors, setErrors] = useState<Record<string, string>>({});
 
-  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
-    const data: Record<string, string> = {};
     const formData = new FormData(formRef.current!);
+    const dataObject = Object.fromEntries(formData.entries());
 
-    for (const [key, value] of formData.entries()) {
-      data[key] = value as string;
+    const formattedData = {
+      ...dataObject,
+      age: Number(dataObject.age),
+      tc: formData.get('tc') === 'on',
+      fileBase64,
+    };
+    try {
+      await validationSchema.validate(formattedData, { abortEarly: false });
+      setErrors({});
+    } catch (err) {
+      if (err instanceof Yup.ValidationError) {
+        const newErrors: Record<string, string> = {};
+        err.inner.forEach((error) => {
+          if (error.path) {
+            newErrors[error.path] = error.message;
+          }
+        });
+        setErrors(newErrors);
+      }
     }
-    data.file = fileBase64;
   };
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -46,32 +65,34 @@ export default function Unontrolled() {
   return (
     <div className="form_page">
       <div className="form">
-        <div>Controlled form</div>
+        <div>Uncontrolled form</div>
         <form ref={formRef} onSubmit={handleSubmit}>
           <label>
             Name
             <input type="text" name="name" />
-            {/* <p className="error">{errors.name?.message}</p> */}
+            {errors.name && <p className="error">{errors.name}</p>}
           </label>
           <label>
             Age
             <input type="number" name="age" />
-            {/* <p className="error">{errors.age?.message}</p> */}
+            {errors.age && <p className="error">{errors.age}</p>}
           </label>
           <label>
             Email
             <input type="email" name="email" />
-            {/* <p className="error">{errors.email?.message}</p> */}
+            {errors.email && <p className="error">{errors.email}</p>}
           </label>
           <label>
             Password
             <input type="password" name="password" />
-            {/* <p className="error">{errors.password?.message}</p> */}
+            {errors.password && <p className="error">{errors.password}</p>}
           </label>
           <label>
             Confirm password
-            <input type="password" name="confiun_password" />
-            {/* <p className="error">{errors.confiumPassword?.message}</p> */}
+            <input type="password" name="confiumPassword" />
+            {errors.confiumPassword && (
+              <p className="error">{errors.confiumPassword}</p>
+            )}
           </label>
           <label>
             Gender
@@ -80,22 +101,23 @@ export default function Unontrolled() {
               <option value="Man">Man</option>
               <option value="Woman">Woman</option>
             </select>
-            {/* <p className="error">{errors.gender?.message}</p> */}
+            {errors.gender && <p className="error">{errors.gender}</p>}
           </label>
           <label className="TC">
             T&C
             <input type="checkbox" name="tc" />
-            {/* <p className="error">{errors.tc?.message}</p> */}
+            {errors.tc && <p className="error">{errors.tc}</p>}
           </label>
           <label>
             Select image
             <input type="file" name="file" onChange={handleFileChange} />
             {fileError && <p className="error">{fileError}</p>}
+            {errors.fileBase64 && <p className="error">{errors.fileBase64}</p>}
           </label>
           <label>
             Country
             <input type="text" name="country" />
-            {/* <p className="error">{errors.country?.message}</p> */}
+            {errors.country && <p className="error">{errors.country}</p>}
           </label>
           <button type="submit">Submit</button>
         </form>
