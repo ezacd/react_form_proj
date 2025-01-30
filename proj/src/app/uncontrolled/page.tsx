@@ -4,9 +4,10 @@ import { useRef, useState } from 'react';
 import './uncontrolled_page.css';
 import { validationSchema } from '../controlled/validationSchema';
 import * as Yup from 'yup';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { submitUncontrolledForm } from '../_redux/formSlice';
 import { useRouter } from 'next/navigation';
+import { RootState } from '../_redux/store';
 
 type FormData = {
   name: string;
@@ -27,6 +28,9 @@ export default function Unontrolled() {
   const [errors, setErrors] = useState<Record<string, string>>({});
 
   const dispatch = useDispatch();
+  const uncontrolledData = useSelector(
+    (state: RootState) => state.form.uncontrolledSubmittedData[0],
+  );
   const router = useRouter();
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
@@ -95,34 +99,54 @@ export default function Unontrolled() {
         <form ref={formRef} onSubmit={handleSubmit}>
           <label>
             Name
-            <input type="text" name="name" />
+            <input
+              type="text"
+              name="name"
+              defaultValue={uncontrolledData?.name || ''}
+            />
             {errors.name && <p className="error">{errors.name}</p>}
           </label>
           <label>
             Age
-            <input type="number" name="age" />
+            <input
+              type="number"
+              name="age"
+              defaultValue={uncontrolledData?.age || ''}
+            />
             {errors.age && <p className="error">{errors.age}</p>}
           </label>
           <label>
             Email
-            <input type="email" name="email" />
+            <input
+              type="email"
+              name="email"
+              defaultValue={uncontrolledData?.email || ''}
+            />
             {errors.email && <p className="error">{errors.email}</p>}
           </label>
           <label>
             Password
-            <input type="password" name="password" />
+            <input
+              type="password"
+              name="password"
+              defaultValue={uncontrolledData?.password || ''}
+            />
             {errors.password && <p className="error">{errors.password}</p>}
           </label>
           <label>
             Confirm password
-            <input type="password" name="confiumPassword" />
+            <input
+              type="password"
+              name="confiumPassword"
+              defaultValue={uncontrolledData?.confiumPassword || ''}
+            />
             {errors.confiumPassword && (
               <p className="error">{errors.confiumPassword}</p>
             )}
           </label>
           <label>
             Gender
-            <select name="gender">
+            <select name="gender" defaultValue={uncontrolledData?.gender || ''}>
               <option value="">Select gender</option>
               <option value="Man">Man</option>
               <option value="Woman">Woman</option>
@@ -131,7 +155,11 @@ export default function Unontrolled() {
           </label>
           <label className="TC">
             T&C
-            <input type="checkbox" name="tc" />
+            <input
+              type="checkbox"
+              name="tc"
+              defaultChecked={uncontrolledData?.tc || false}
+            />
             {errors.tc && <p className="error">{errors.tc}</p>}
           </label>
           <label>
@@ -142,7 +170,11 @@ export default function Unontrolled() {
           </label>
           <label>
             Country
-            <input type="text" name="country" />
+            <input
+              type="text"
+              name="country"
+              defaultValue={uncontrolledData?.country || ''}
+            />
             {errors.country && <p className="error">{errors.country}</p>}
           </label>
           <button type="submit">Submit</button>
